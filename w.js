@@ -981,7 +981,10 @@ async function get特洛伊Config(password, hostName, sub, UA, RproxyIP, _url, e
   </head> 
 	
 		`;
-				const protocolMain = atob(pt) + '://' + password + atob(at) + hostName + ":443" + commonUrlPart;
+    const at = 'QA==';
+    const pt = 'dmxlc3M=';
+    const ed = 'RUR0dW5uZWw=';
+		const protocolMain = atob(pt) + '://' + password + atob(at) + hostName + ":443" + commonUrlPart;
 		const protocolSec = atob(pt) + '://' + password + atob(at) + proxyIP[0].split(':')[0] + ":" + proxyPort + commonUrlPart;
 		return `
       <div class="container config-item">
@@ -1006,8 +1009,7 @@ async function get特洛伊Config(password, hostName, sub, UA, RproxyIP, _url, e
           <button class="btn copy-btn" onclick='copyToClipboard(document.getElementById("proxyConfig").textContent)'><i class="fas fa-copy"></i> Copy</button>
         </div>
       </div>
-    `;
-	}).join('');
+    `
 		return `
   ${htmlHead}`;
 	} else {
