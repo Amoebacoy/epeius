@@ -3,6 +3,7 @@ import { connect } from "cloudflare:sockets";
 
 let password = 'auto';
 let proxyIP = '103.178.175.52';
+let proxyPort = proxyIP.includes(':') ? proxyIP.split(':')[1] : '443';
 let sub = ''; 
 let subConverter = 'SUBAPI.fxxk.dedyn.io';// clash订阅转换后端，目前使用CM的订阅转换功能。自带虚假节点信息防泄露
 let subConfig = "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/config/ACL4SSR_Online_Mini_MultiMode.ini"; //订阅配置文件
@@ -802,9 +803,14 @@ async function get特洛伊Config(password, hostName, sub, UA, RproxyIP, _url, e
 			if (addressesapi.length > 0) 订阅器 += `ADDAPI（TLS优选域名&IP 的 API）: <br>&nbsp;&nbsp;${addressesapi.join('<br>&nbsp;&nbsp;')}<br>`;
 			if (addressescsv.length > 0) 订阅器 += `ADDCSV（IPTest测速csv文件 限速 ${DLS} ）: <br>&nbsp;&nbsp;${addressescsv.join('<br>&nbsp;&nbsp;')}<br>`;
 		}
-    
-    const sublink = `https://${hostName}/sub/${password[0]}?format=clash`
-  	const subbestip = `https://${hostName}/bestip/${password[0]}`;
+    const at = 'QA==';
+    const pt = 'dmxlc3M=';
+    const ed = 'RUR0dW5uZWw=';
+    const commonUrlPart = "?encryption=none&security=tls&sni=${hostName}&fp=randomized&type=ws&host=${hostName}&path=%2F%3Fed%3D2048#${hostName}";
+	const protocolMain = atob(pt) + '://' + password + atob(at) + hostName + ":443" + commonUrlPart;
+	const protocolSec = atob(pt) + '://' + password + atob(at) + proxyIP[0].split(':')[0] + ":" + proxyPort + commonUrlPart;
+    const sublink = `https://${hostName}/sub/${password[0]}?format=clash`;
+  	const subbestip = `https://url.v1.mk/sub?target=singbox&url=${encodeURIComponent(`https://${hostName}/sub/${password}?format=singbox`)}&insert=false&emoji=true&list=false&tfo=false&scv=true&fdn=false&sort=false&new_name=true`;
     const clash_link = `https://url.v1.mk/sub?target=clash&url=${encodeURIComponent(`https://${hostName}/sub/${password}?format=clash`)}&insert=false&emoji=true&list=false&tfo=false&scv=true&fdn=false&sort=false&new_name=true`;
 	// HTML Head with CSS and FontAwesome library 
 		
@@ -817,9 +823,9 @@ async function get特洛伊Config(password, hostName, sub, UA, RproxyIP, _url, e
 	<div style="clear: both;"></div>
 	<div class="btn-group">
 	  <a href="//${hostName}/sub/${password}" class="btn" target="_blank"><i class="fas fa-link"></i> TROJAN Subscription</a>
-	  <a href="clash://install-config?url=${encodeURIComponent(`https://${proxyhost}${hostName}/${password}?sub`)}" class="btn" target="_blank"><i class="fas fa-bolt"></i> Clash Subscription</a>
+	  <a href="${sublink}" class="btn" target="_blank"><i class="fas fa-bolt"></i> Clash Subscription</a>
 	  <a href="${clash_link}" class="btn" target="_blank"><i class="fas fa-bolt"></i> Clash Link</a>
-	  <a href="${subbestip}" class="btn" target="_blank"><i class="fas fa-star"></i> Best IP Subscription</a>
+	  <a href="${subbestip}" class="btn" target="_blank"><i class="fas fa-star"></i> Sing-Box </a>
 	</div>
 	<div class="subscription-info">
 	  <h3>Options Explained:</h3>
@@ -845,6 +851,15 @@ async function get特洛伊Config(password, hostName, sub, UA, RproxyIP, _url, e
 	  SUBCONFIG（订阅转换配置文件）: ${subConfig}<br>
 
 	  </div>
+	  <h2>UUID: ${password}</h2>
+        <h3>Default IP Configuration</h3>
+        <div class="code-container">
+          <pre><code>${v2ray}</code></pre>
+          <button class="btn copy-btn" onclick='copyToClipboard("${protocolMain}")'><i class="fas fa-copy"></i> Copy</button>
+        </div>
+        
+
+      </div>
   </div>
 	<head>
     <title>EDtunnel: Configuration</title>
@@ -979,37 +994,7 @@ async function get特洛伊Config(password, hostName, sub, UA, RproxyIP, _url, e
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   </head> 
-	
 		`;
-    const at = 'QA==';
-    const pt = 'dmxlc3M=';
-    const ed = 'RUR0dW5uZWw=';
-		const protocolMain = atob(pt) + '://' + password + atob(at) + hostName + ":443" + commonUrlPart;
-		const protocolSec = atob(pt) + '://' + password + atob(at) + proxyIP[0].split(':')[0] + ":" + proxyPort + commonUrlPart;
-		return `
-      <div class="container config-item">
-        <h2>UUID: ${userID}</h2>
-        <h3>Default IP Configuration</h3>
-        <div class="code-container">
-          <pre><code>${protocolMain}</code></pre>
-          <button class="btn copy-btn" onclick='copyToClipboard("${protocolMain}")'><i class="fas fa-copy"></i> Copy</button>
-        </div>
-        
-        <h3>Best IP Configuration</h3>
-        <div class="input-group mb-3">
-          <select class="form-select" id="proxySelect" onchange="updateProxyConfig()">
-            ${typeof proxyIP === 'string' ? 
-              `<option value="${proxyIP}">${proxyIP}</option>` : 
-              Array.from(proxyIP).map(proxy => `<option value="${proxy}">${proxy}</option>`).join('')}
-          </select>
-        </div>
-		<br>
-        <div class="code-container">
-          <pre><code id="proxyConfig">${protocolSec}</code></pre>
-          <button class="btn copy-btn" onclick='copyToClipboard(document.getElementById("proxyConfig").textContent)'><i class="fas fa-copy"></i> Copy</button>
-        </div>
-      </div>
-    `
 		return `
   ${htmlHead}`;
 	} else {
