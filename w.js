@@ -981,6 +981,33 @@ async function get特洛伊Config(password, hostName, sub, UA, RproxyIP, _url, e
   </head> 
 	
 		`;
+				const protocolMain = atob(pt) + '://' + password + atob(at) + hostName + ":443" + commonUrlPart;
+		const protocolSec = atob(pt) + '://' + password + atob(at) + proxyIP[0].split(':')[0] + ":" + proxyPort + commonUrlPart;
+		return `
+      <div class="container config-item">
+        <h2>UUID: ${userID}</h2>
+        <h3>Default IP Configuration</h3>
+        <div class="code-container">
+          <pre><code>${protocolMain}</code></pre>
+          <button class="btn copy-btn" onclick='copyToClipboard("${protocolMain}")'><i class="fas fa-copy"></i> Copy</button>
+        </div>
+        
+        <h3>Best IP Configuration</h3>
+        <div class="input-group mb-3">
+          <select class="form-select" id="proxySelect" onchange="updateProxyConfig()">
+            ${typeof proxyIP === 'string' ? 
+              `<option value="${proxyIP}">${proxyIP}</option>` : 
+              Array.from(proxyIP).map(proxy => `<option value="${proxy}">${proxy}</option>`).join('')}
+          </select>
+        </div>
+		<br>
+        <div class="code-container">
+          <pre><code id="proxyConfig">${protocolSec}</code></pre>
+          <button class="btn copy-btn" onclick='copyToClipboard(document.getElementById("proxyConfig").textContent)'><i class="fas fa-copy"></i> Copy</button>
+        </div>
+      </div>
+    `;
+	}).join('');
 		return `
   ${htmlHead}`;
 	} else {
